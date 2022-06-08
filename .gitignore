@@ -1,0 +1,18 @@
+# Shortcuts
+*.lnk
+
+# ROMs and build output
+_rom/*
+!_rom/*.txt
+!_rom/*.lnk
+
+# Temp folder
+_temp/
+
+# Third party tools
+tools/*.exe
+tools/*.dll
+!tools/PixelPet.exe
+
+# Ghidra database
+ghidra/
