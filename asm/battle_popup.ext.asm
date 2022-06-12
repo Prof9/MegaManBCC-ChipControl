@@ -273,6 +273,9 @@ popup_handler:
 	pop	r15
 
 
+	.pool
+
+
 .align 2
 popup_draw:
 	// r0 = background data
@@ -291,13 +294,29 @@ popup_draw:
 
 	// Refresh for new chip
 	ldrb	r0,[r5,0x6]		// cursor position
-	mov	r1,0x47
-	ldrb	r2,[r5,r1]		// shown chip
-	cmp	r0,r2
+	bl	battle_getChipAtCursor
+	mov	r7,r0
+
+	mov	r0,0x47
+	ldrb	r0,[r5,r0]		// shown chip
+	bl	battle_getChipAtCursor
+
+	ldrb	r1,[r5,0x6]		// cursor position
+	mov	r2,0x47
+	strb	r1,[r5,r2]		// shown chip
+
+	cmp	r7,r0
 	beq	@@drawPopup
-	strb	r0,[r5,r1]
 
 @@load:
+	// Set chip open timer
+	ldrb	r0,[r5,0x7]
+	mov	r1,(0xF << 0x4)
+	bic	r0,r1
+	mov	r1,((9) << 0x4)
+	orr	r0,r1
+	strb	r0,[r5,0x7]		// chip open timer
+
 	// Load chip image
 	mov	r0,0x47
 	ldrb	r0,[r5,r0]		// shown chip
@@ -315,7 +334,14 @@ popup_draw:
 	bl	popup_isClosed
 	cmp	r0,0x0
 	beq	@@drawPopup2
-	b	@@end
+
+	// Clear chip open timer
+	ldrb	r0,[r5,0x7]
+	mov	r1,(0xF << 0x4)
+	bic	r0,r1
+	strb	r0,[r5,0x7]
+
+	b	@@timer
 
 @@drawPopup2:
 	// Load popup tilemap
@@ -337,14 +363,44 @@ popup_draw:
 	bl	bx_r7
 
 	// Draw chip sprite
-//	ldr	r0,=0x3002C30
+//	ldr	r0,=addr_0x3002C30
 //	ldr	r1,[r0]		// OAM write pointer
-	ldr	r1,=0x70003F8	// last OAM in VRAM
-	ldr	r2,=0xC0001019
+	ldr	r1,=addr_0x70003F8	// last OAM in VRAM
+	ldr	r2,=0xC0001000
+
+	ldrb	r7,[r5,0x7]		// chip open timer
+	lsr	r7,r7,0x4
+	cmp	r7,(7)
+	bgt	@@drawName
+
+	mov	r3,(25)		// y
+	cmp	r7,0x0
+	beq	@@setChipY
+	sub	r3,(32)
+
+@@setChipY:
+	lsl	r3,r3,0x18
+	lsr	r3,r3,0x18
+	orr	r2,r3
+
 	mov	r3,0x48
 	ldsb	r3,[r5,r3]		// x
 	lsl	r3,r3,0x3
 	add	r3,(16)
+	cmp	r7,0x0
+	beq	@@setChipX
+	sub	r3,(32)
+
+	// Also set rot/scal settings
+	// r7 no longer used for a bit
+	mov	r7,(31)		// rot/scal params
+	lsl	r7,r7,0x19
+	orr	r2,r7
+	mov	r7,0x3
+	lsl	r7,r7,0x8
+	orr	r2,r7
+
+@@setChipX:
 	lsl	r3,r3,0x17
 	lsr	r3,r3,0x7
 	orr	r2,r3
@@ -354,6 +410,7 @@ popup_draw:
 	add	r1,0x8
 	str	r1,[r0]
 
+@@drawName:
 	// Get chip name
 	mov	r0,0x47
 	ldrb	r0,[r5,r0]		// shown chip
@@ -556,9 +613,75 @@ popup_draw:
 	ldr	r7,=addr_0x8006AD8|1
 	bl	bx_r7
 
+@@timer:
+	// Check chip open timer
+	ldrb	r0,[r5,0x7]		// chip open timer
+	lsr	r1,r0,0x4
+	cmp	r1,0x0
+	beq	@@reloadPalette
+
+	// Decrement chip open timer
+	sub	r0,((1) << 0x4)
+	strb	r0,[r5,0x7]		// chip open timer
+
+	sub	r1,0x1
+	cmp	r1,(7)
+	bge	@@end
+
+	// Set rot/scal parameters
+	lsl	r1,r1,0x1		// chip open timer * 2
+	ldr	r0,=addr_0x70003E0	// last rot/scal params
+	add	r2,=@chipRotScalX
+	ldrh	r2,[r2,r1]
+	strh	r2,[r0,0x6]
+	mov	r2,0x0
+	strh	r2,[r0,0xE]
+	strh	r2,[r0,0x16]
+	add	r2,=@chipRotScalY
+	ldrh	r2,[r2,r1]
+	strh	r2,[r0,0x1E]
+
+@@reloadPalette:
+	// Reload chip palette
+	mov	r0,0x47
+	ldrb	r0,[r5,r0]		// shown chip
+	bl	battle_getChipAtCursor
+	mov	r1,r0
+	mov	r0,0x4		// newly added slot
+	ldr	r2,=addr_0x8009F78|1	// load chip palette
+	bl	bx_r2
+
+	// Apply blending to chip palette
+	ldr	r0,=(addr_0x3002420+0x240)
+	ldr	r1,=0x677C
+	ldr	r2,=(addr_0x3002420+0x240)
+	ldrb	r3,[r5,0x7]		// chip open timer
+	lsr	r3,r3,0x4
+	add	r7,=@chipPalBlend
+	ldrb	r3,[r7,r3]
+	ldr	r7,=addr_0x8023598|1	// load palette blended
+	bl	bx_r7
+
+	// Flush palettes to VRAM immediately
+	ldr	r0,=addr_0x80026E4|1
+	bl	bx_r0
+
 @@end:
 	add	sp,((4)*0x4)
 	pop	r4,r6-r7,r15
+
+
+.align 4
+@chipRotScalX:
+	.dh	0x100, 0x115, 0x135, 0x16A, 0x1CD, 0x2A3, 0x539
+
+.align 4
+@chipRotScalY:
+	.dh	0x100, 0x0FF, 0x0FF, 0x0FF, 0x0FF, 0x0FF, 0x0FF
+
+.align 4
+@chipPalBlend:
+	.db	0x0, 0x4, 0x6, 0x8, 0xA, 0xC, 0xE
 
 
 .align 2

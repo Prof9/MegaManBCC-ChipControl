@@ -13,9 +13,12 @@
 .definelabel	addr_0x2005160,	0x2005160
 .definelabel	addr_0x200B810,	0x200B810
 .definelabel	addr_0x200B950,	0x200B950
+.definelabel	addr_0x3002420,	0x3002420
 .definelabel	addr_0x6000000,	0x6000000
 .definelabel	addr_0x600A640,	0x600A640
 .definelabel	addr_0x600BF20,	0x600BF20
+.definelabel	addr_0x70003E0,	0x70003E0
+.definelabel	addr_0x70003F8,	0x70003F8
 .definelabel	addr_0x8002300,	0x8002300
 .definelabel	addr_0x80026E4,	0x80026E4
 .definelabel	addr_0x80062B4,	0x80062B4
@@ -43,6 +46,7 @@
 .definelabel	addr_0x8009ABC,	0x8009ABC
 .definelabel	addr_0x8009EDC,	0x8009EDC
 .definelabel	addr_0x8009F6C,	0x8009F6C
+.definelabel	addr_0x8009F78,	0x8009F78
 .definelabel	addr_0x8009FC4,	0x8009FC4
 .definelabel	addr_0x800EE50,	0x800EE50
 .definelabel	addr_0x800EF66,	0x800EF66
@@ -54,6 +58,7 @@
 .definelabel	addr_0x800F174,	0x800F174
 .definelabel	addr_0x800F28C,	0x800F28C
 .definelabel	addr_0x8010508,	0x8010508
+.definelabel	addr_0x8023598,	0x8023598
 .definelabel	addr_0x8024554,	0x8024554
 .definelabel	addr_0x8024570,	0x8024570
 .definelabel	addr_0x80245E0,	0x80245E0

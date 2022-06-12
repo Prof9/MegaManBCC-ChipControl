@@ -44,6 +44,13 @@
 	str	r1,[r0,0x18]	// chip6
 	str	r1,[r5]		// chip0, slot in chip, navi chip, chip1 (overwritten below)
 
+	// Check if simulating
+	// If so, always run
+	ldr	r0,=addr_0x200B810
+	ldrb	r0,[r0,0x6]
+	lsr	r0,r0,0x4		// test 0x8
+	bcs	@@run
+
 	// Check if multiplayer
 	// If so, exit (do not call random at all)
 	ldr	r1,=addr_0x200B810
@@ -63,6 +70,7 @@
 	cmp	r0,r1
 	beq	@@end
 
+@@run:
 	// Otherwise choose random chips
 	mov	r6,0x0
 	mov	r7,(3)

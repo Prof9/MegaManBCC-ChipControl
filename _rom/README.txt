@@ -1,6 +1,6 @@
 MEGA MAN BATTLE CHIP CHALLENGE - CHIP CONTROL
-Version 1.0.0
-9 June 2022
+Version 1.1.0
+12 June 2022
 
 Official discussion topic:
 https://forums.therockmanexezone.com/mega-man-battle-chip-challenge-chip-control-mod-t16681.html
@@ -12,9 +12,10 @@ https://github.com/Prof9/MegaManBCC-ChipControl
 
 INTRODUCTION
 
-Mega Man Battle Chip Challenge is featuring notoriously RNG-heavy, automated
-gameplay. During battle, the game will choose your chips for you completely at
-random, leaving you with very little control over the outcome of the battle.
+Mega Man Battle Chip Challenge is a game featuring notoriously RNG-heavy,
+automated gameplay. During battle, the game will choose your chips for you
+completely at random, leaving you with very little control over the outcome of
+the battle.
 
 Essentially, you have to set up your Program Deck in such a way that it's likely
 to beat the opponent, and then just pray to RNGesus that your Navi doesn't
@@ -60,8 +61,8 @@ HOW TO PATCH
 Apply the appropriate patch to a ROM of Mega Man Battle Chip Challenge or
 Rockman EXE Battle Chip GP:
 
- *  MegaManBCC-ChipControl-Ver1.0.0-English.ips
- *  RockmanEXEBCGP-ChipControl-Ver1.0.0-Japanese.ips
+ *  MegaManBCC-ChipControl-Ver1.1.0-English.ips
+ *  RockmanEXEBCGP-ChipControl-Ver1.1.0-Japanese.ips
 
 If you want to patch the North American or European ROM, use the English path.
 For the Japanese ROM, use the Japanese patch.

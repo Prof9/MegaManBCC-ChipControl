@@ -1,2 +1,8 @@
+Ver. 1.1.0 - 12 June 2022
+ *  Fixed Program Deck evaluation (Navi "Chat" option) always indicating your
+    chances of winning are terrible.
+ *  Added an animation to the in-battle chip preview window to match the other
+    menus in the game.
+
 Ver. 1.0.0 - 9 June 2022
  *  Initial release.

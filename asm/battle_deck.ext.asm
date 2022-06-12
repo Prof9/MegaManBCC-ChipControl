@@ -7,11 +7,12 @@
 // 02005167  u8    flags
 //                 0x01 = close popup with description
 //                 0x02 = player can reroll
+//                 0xF0 = chip popup chip open timer
 // 020051A6  u8    popup states
 //                 0x03 = chip popup state
 //                 0x0C = description state
 //                 0xF0 = description y-offset
-// 020051A7  u8    shown chip
+// 020051A7  u8    shown chip (cursor location)
 // 020051A8  s8    chip popup x
 //
 
@@ -122,13 +123,16 @@ battle_programDeckHandler_state2_0_1:
 	ldr	r2,=addr_0x800800C|1
 	bl	bx_r2
 
-	bl	popup_open
-
 	// Go to next state
 	mov	r0,0x2
 	strb	r0,[r5,0x3]
 	mov	r0,0x1		// cursor position 1
 	strb	r0,[r5,0x6]
+
+	// Dummy popup draw before open (to avoid chip animation)
+	bl	popup_draw
+
+	bl	popup_open
 
 	bl	@updateCursorPos
 
